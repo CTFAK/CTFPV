@@ -38,7 +38,7 @@
                         <CheckBox Style="{DynamicResource CheckBoxStyle1}" HorizontalAlignment="Right"/>
                     </Grid>
                 </TreeViewItem.Header>
-            </TreeViewItem> -->
+            </TreeViewItem> 
             <TreeViewItem>
                 <TreeViewItem.Header>
                     <Grid Width="275">
@@ -46,7 +46,7 @@
                         <colorpicker:PortableColorPicker ColorState="{Binding ElementName=main, Path=ColorState, Mode=TwoWay}" Grid.Row="1" Width="15" Height="15" HorizontalAlignment="Right"/>
                     </Grid>
                 </TreeViewItem.Header>
-            </TreeViewItem>
+            </TreeViewItem>-->
         </TreeView>
         <Label x:Name="PropertiesLabel" Content="Properties" Background="#FF1D1F23" BorderBrush="#FF959CB3" BorderThickness="1,1,1,1" Padding="8,0,0,2" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Foreground="#FFDDE7FF" VerticalContentAlignment="Center" Grid.Row="2" Grid.RowSpan="1"/>
         <ComboBox Style="{DynamicResource ComboBoxStyle1}" x:Name="Processes" DropDownOpened="ProcessesSelected" BorderBrush="#FF323640" Foreground="#FFDDE7FF" Grid.RowSpan="1" VerticalContentAlignment="Center" Padding="10,0,0,1"/>
