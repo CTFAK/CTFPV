@@ -1,11 +1,16 @@
-﻿using Encryption_Key_Finder.InformationItems;
+﻿using CTFPV.InformationItems;
+using CTFPV.Miscellaneous;
+using Encryption_Key_Finder.InformationItems;
 using Memory;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,18 +24,19 @@ namespace CTFPV
     {
         public static Mem MemLib = new Mem();
         public static long MainPointer = 0;
-        public static string BasePointer = "base";
         public static string CurrentProcess = "";
 
         private Task runLoop;
         private int previousFrame;
 
-        public static CRunApp CRunApp;
+        public static CRunApp CRunApp = new CRunApp();
+        public static CRunFrame CRunFrame;
+
+        public static string[] FrameNames;
             
         public PV()
         {
             InitializeComponent();
-            CRunApp = new CRunApp();
         }
 
         private void CloseProgram(object sender, EventArgs e) => Environment.Exit(0);
@@ -38,6 +44,7 @@ namespace CTFPV
         private void Loader_Click(object sender, RoutedEventArgs e)
         {
             Objects.Items.Clear();
+            Properties.Items.Clear();
             MainPointer = 0;
             if (runLoop != null)
                 runLoop.Dispose();
@@ -47,22 +54,39 @@ namespace CTFPV
 
         public async void RunLoop()
         {
-            await CreateList();
+            await Create();
             if (MainPointer <= 0)
                 return;
             previousFrame = -1;
+            Stopwatch stopwatch = new Stopwatch();
             while (true)
             {
-                if (previousFrame != CRunApp.CurrentFrame)
+                stopwatch.Restart();
+                try
                 {
-                    previousFrame = CRunApp.CurrentFrame;
-                    RefreshList();
+                    CRunApp.RefreshData("base+" + MainPointer.ToString("X"));
+                    if (CRunApp.CurrentFrame != -1)
+                    {
+                        if (previousFrame != CRunApp.CurrentFrame)
+                        {
+                            CRunApp = new CRunApp();
+                            CRunApp.InitData("base+" + MainPointer.ToString("X"));
+                            CRunFrame = new CRunFrame();
+                            CRunFrame.InitData("base+" + (MainPointer + 4).ToString("X"));
+                            FrameNames[CRunApp.CurrentFrame] = CRunFrame.Name;
+                            CreateList();
+                            previousFrame = CRunApp.CurrentFrame;
+                        }
+                        CRunFrame.RefreshData("base+" + (MainPointer + 4).ToString("X"));
+                        RefreshList();
+                    }
                 }
-                Thread.Sleep((int)(1000.0 / CRunApp.FramesPerSecond));
+                catch { }
+                Thread.Sleep((int)(1000.0 / CRunApp.FramesPerSecond) - (int)(stopwatch.ElapsedMilliseconds % (1000.0 / CRunApp.FramesPerSecond)));
             }
         }
 
-        public async Task CreateList()
+        public async Task Create()
         {
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
@@ -78,13 +102,19 @@ namespace CTFPV
             await FindMV();
             if (MainPointer <= 0)
                 return;
-            BasePointer = $"base+{MainPointer.ToString("X")}";
 
-            CRunApp = new CRunApp();
-            CRunApp.InitData();
+            try
+            {
+                CRunApp = new CRunApp();
+                CRunApp.InitData("base+" + MainPointer.ToString("X"));
+            }
+            catch {}
+            FrameNames = new string[CRunApp.FrameCount];
+            for (int i = 0; i < CRunApp.FrameCount; i++)
+                FrameNames[i] = "* Frame " + (i + 1);
         }
 
-        public void RefreshList()
+        public void CreateList()
         {
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
@@ -93,12 +123,46 @@ namespace CTFPV
             }));
         }
 
+        public void RefreshList()
+        {
+            if (Objects.Items.Count == 0)
+                return;
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                CRunApp.RefreshListPanel(ref Objects);
+            }));
+        }
+
+        private PropertyPanel currentLPParent;
+        public void UpdateListPanel(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            TreeView treeView = (TreeView)sender;
+            TreeViewItem selItem = (TreeViewItem)treeView.SelectedItem;
+            if (selItem == null) return;
+            TagHeader tag = (TagHeader)selItem.Tag;
+
+            currentLPParent = tag.Parent;
+            List<TreeViewItem> panel = currentLPParent.GetPanel();
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                Properties.Items.Clear();
+                foreach (TreeViewItem item in panel)
+                    Properties.Items.Add(item);
+            }));
+        }
+
+        public void RefreshListPanel()
+        {
+            if (currentLPParent == null) return;
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                currentLPParent.RefreshPanel(ref Properties);
+            }));
+        }
+
         public async Task FindMV()
         {
-            IEnumerable<long> BaseSearch = await MemLib.AoBScan(65536, 16777216 * 2, "4D 5A 90 00 03 00 00 00 04 00 00 00 FF FF 00 00 B8 00 00 00 00 00 00 00 40", true, false, true, false, "");
-            if (BaseSearch.Count() == 0) 
-                return;
-            var baseAddress = BaseSearch.ToArray()[0];
+            var baseAddress = MemLib.mProc.MainModule.BaseAddress.ToInt32();
 
             IEnumerable<long> PAMUSearch = await MemLib.AoBScan("50 41 4D 55", true, true);
             
@@ -133,7 +197,7 @@ namespace CTFPV
                 long i = pointer - baseAddress;
                 if (i > 1048576 || i < 0)
                     continue;
-                string output = MemLib.ReadString("base+" + i.ToString("X") + ", 0x0", "", 4);
+                string output = MemLib.ReadString("base+" + i.ToString("X") + ", 0x0", length: 4, stringEncoding: Encoding.ASCII);
                 if (output == "PAMU")
                     MainPointer = i;
             }
@@ -160,6 +224,44 @@ namespace CTFPV
                 if (!no)
                     Processes.Items.Add(newCombo);
             }
+        }
+
+        public static void CloseGame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "0");
+        }
+
+        public static void NextFrame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "1");
+        }
+
+        public static void PreviousFrame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "2");
+        }
+
+        public static void JumpToFrame(object sender, RoutedEventArgs e)
+        {
+            int FrameID = short.Parse((sender as MenuItem).Tag.ToString()) | unchecked((short)0x8000);
+
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "3");
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x38", "int", FrameID.ToString());
+        }
+
+        public static void RestartGame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "4");
+        }
+
+        public static void PauseGame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "5");
+        }
+
+        public static void RestartFrame(object sender, RoutedEventArgs e)
+        {
+            MemLib.WriteMemory("base+" + (MainPointer + 8).ToString("X") + ", 0x30", "int", "101");
         }
     }
 
@@ -189,6 +291,52 @@ namespace CTFPV
             if (x == null || y == null)
                 return 0;
             return x.CompareTo(y);
+        }
+    }
+
+    public static class ByteFlag
+    {
+        public static bool GetFlag(uint flagbyte, int pos)
+        {
+            uint mask = (uint)(1 << pos);
+            uint result = flagbyte & mask;
+            return result == mask;
+        }
+    }
+    public class BitDict
+    {
+        public string[] Keys;
+        public uint flag { get; set; }
+
+        public BitDict(string[] keys) => Keys = keys;
+        public bool this[string key]
+        {
+            get => GetFlag(key);
+            set => SetFlag(key, value);
+        }
+
+        public bool GetFlag(string key)
+        {
+            int pos = Array.IndexOf(Keys, key);
+            if (pos >= 0)
+                return (flag & ((uint)Math.Pow(2, pos))) != 0;
+            return false;
+        }
+
+        public void SetFlag(string key, bool value)
+        {
+            if (value)
+                flag |= (uint)Math.Pow(2, Array.IndexOf(Keys, key));
+            else
+                flag &= ~(uint)Math.Pow(2, Array.IndexOf(Keys, key));
+        }
+
+        public override string ToString()
+        {
+            Dictionary<string, bool> actualKeys = new Dictionary<string, bool>();
+            foreach (var key in Keys)
+                actualKeys[key] = this[key];
+            return string.Join(";\n", actualKeys.Select(kv => kv.Key + "=" + kv.Value).ToArray());
         }
     }
 }

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
         xmlns:local="clr-namespace:CTFPV"
         mc:Ignorable="d"
         Title="PV" Height="779" Width="300" Closed="CloseProgram"
@@ -19,13 +20,34 @@
             <ColumnDefinition Width="49*"/>
         </Grid.ColumnDefinitions>
         <Button Style="{DynamicResource ButtonStyle1}" x:Name="Loader" Content="Load" Click="Loader_Click" Padding="1,0,1,1" Grid.Column="1" Background="#FF1D1F23" BorderBrush="#FF959CB3" Foreground="#FFDDE7FF" Grid.RowSpan="1"/>
-        <TreeView x:Name="Objects" IsTextSearchEnabled="True" Grid.ColumnSpan="2" Background="#FF2D2E35" Grid.RowSpan="1" Grid.Row="1">
+        <TreeView x:Name="Objects" IsTextSearchEnabled="True" Grid.ColumnSpan="2" Background="#FF2D2E35" Grid.RowSpan="1" Grid.Row="1" SelectedItemChanged="UpdateListPanel">
             <TreeView.Resources>
                 <SolidColorBrush Color="#FF5D5E65" x:Key="{x:Static SystemColors.HighlightBrushKey}"/>
                 <SolidColorBrush Color="#FF5D5E65" x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"/>
             </TreeView.Resources>
         </TreeView>
-        <TreeView x:Name="Properties" IsTextSearchEnabled="True" Grid.ColumnSpan="2" Background="#FF2D2E35" Grid.Row="3"/>
+        <TreeView x:Name="Properties" IsTextSearchEnabled="True" Grid.ColumnSpan="2" Background="#FF2D2E35" Grid.Row="3">
+            <TreeView.Resources>
+                <SolidColorBrush Color="#FF5D5E65" x:Key="{x:Static SystemColors.HighlightBrushKey}"/>
+                <SolidColorBrush Color="#FF5D5E65" x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"/>
+            </TreeView.Resources>
+            <!-- <TreeViewItem>
+                <TreeViewItem.Header>
+                    <Grid Width="275">
+                        <Label HorizontalAlignment="Left" Padding="0,0,0,1" Content="This Is A Test Item" FontSize="10" VerticalContentAlignment="Center" Foreground="#FFDDE7FF"/>
+                        <CheckBox Style="{DynamicResource CheckBoxStyle1}" HorizontalAlignment="Right"/>
+                    </Grid>
+                </TreeViewItem.Header>
+            </TreeViewItem> -->
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <Grid Width="275">
+                        <Label HorizontalAlignment="Left" Padding="0,0,0,1" Content="This Is A Test Item" FontSize="10" VerticalContentAlignment="Center" Foreground="#FFDDE7FF"/>
+                        <colorpicker:PortableColorPicker ColorState="{Binding ElementName=main, Path=ColorState, Mode=TwoWay}" Grid.Row="1" Width="15" Height="15" HorizontalAlignment="Right"/>
+                    </Grid>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+        </TreeView>
         <Label x:Name="PropertiesLabel" Content="Properties" Background="#FF1D1F23" BorderBrush="#FF959CB3" BorderThickness="1,1,1,1" Padding="8,0,0,2" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Foreground="#FFDDE7FF" VerticalContentAlignment="Center" Grid.Row="2" Grid.RowSpan="1"/>
         <ComboBox Style="{DynamicResource ComboBoxStyle1}" x:Name="Processes" DropDownOpened="ProcessesSelected" BorderBrush="#FF323640" Foreground="#FFDDE7FF" Grid.RowSpan="1" VerticalContentAlignment="Center" Padding="10,0,0,1"/>
     </Grid>
