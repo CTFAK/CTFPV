@@ -138,8 +138,9 @@ namespace CTFPV.InformationItems
             FadeCreateFlags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x240");
 
             // Alterable Values
-            AlterableValues = new CRunValue[26];
-            for (int i = 0; i < 26; i++)
+            int AlterableValueCount = PV.MemLib.ReadInt(parentPointer + ", 0x246");
+            AlterableValues = new CRunValue[AlterableValueCount];
+            for (int i = 0; i < AlterableValueCount; i++)
             {
                 CRunValue val = new CRunValue();
                 val.ValueOffset = i * 16;
@@ -147,9 +148,10 @@ namespace CTFPV.InformationItems
                 AlterableValues[i] = val;
             }
             AlterableFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x2AA");
-            AlterableStrings = new string[10];
-            for (int i = 0; i < 10; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            int AlterableStringCount = PV.MemLib.ReadInt(parentPointer + ", 0x2CC");
+            AlterableStrings = new string[AlterableStringCount];
+            for (int i = 0; i < AlterableStringCount; i++)
+                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
         }
 
         public override void RefreshData(string parentPointer)
@@ -172,8 +174,9 @@ namespace CTFPV.InformationItems
             ZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x22A");
 
             // Alterable Values
-            AlterableValues = new CRunValue[26];
-            for (int i = 0; i < 26; i++)
+            int AlterableValueCount = PV.MemLib.ReadInt(parentPointer + ", 0x246");
+            AlterableValues = new CRunValue[AlterableValueCount];
+            for (int i = 0; i < AlterableValueCount; i++)
             {
                 CRunValue val = new CRunValue();
                 val.ValueOffset = i * 16;
@@ -181,9 +184,10 @@ namespace CTFPV.InformationItems
                 AlterableValues[i] = val;
             }
             AlterableFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x2AA");
-            AlterableStrings = new string[10];
-            for (int i = 0; i < 10; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            int AlterableStringCount = PV.MemLib.ReadInt(parentPointer + ", 0x2CC");
+            AlterableStrings = new string[AlterableStringCount];
+            for (int i = 0; i < AlterableStringCount; i++)
+                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
         }
 
         public override List<TreeViewItem> GetPanel()
@@ -429,7 +433,7 @@ namespace CTFPV.InformationItems
                 TreeViewItem altStrPanel = Templates.Editbox();
                 ((altStrPanel.Header as Grid).Children[0] as Label).Content = "Alterable String " + i;
                 ((altStrPanel.Header as Grid).Children[1] as TextBox).Text = AlterableStrings[i];
-                (altStrPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0";
+                (altStrPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0";
                 (altStrPanel.Tag as TagHeader).ActionType = 5;
                 altStrsPanel.Items.Add(altStrPanel);
             }

@@ -626,7 +626,7 @@ namespace Encryption_Key_Finder.InformationItems
 
             TagHeader tag = new TagHeader();
             tag.Parent = this;
-            tag.Pointer = latestParentPointer.Replace("base", $"\"{PV.MemLib.mProc.MainModule.ModuleName}\"");
+            tag.Pointer = latestParentPointer;
             appItem.ContextMenu = tag.GetMenu();
             appItem.Tag = tag;
             appItem.Header = header;
