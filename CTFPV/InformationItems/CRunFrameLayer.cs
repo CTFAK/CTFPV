@@ -257,6 +257,7 @@ namespace CTFPV.InformationItems
                 ((optionPanel.Header as Grid).Children[1] as CheckBox).IsChecked = Options[key];
                 (optionPanel.Tag as TagHeader).ParentFlags = Options;
                 (optionPanel.Tag as TagHeader).Flag = key;
+                (optionPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (LayerOffset + 44).ToString("X");
                 optionsPanel.Items.Add(optionPanel);
             }
 

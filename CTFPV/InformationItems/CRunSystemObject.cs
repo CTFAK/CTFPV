@@ -159,6 +159,7 @@ namespace CTFPV.InformationItems
                 ((creationFlagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = CreationFlags[key];
                 (creationFlagPanel.Tag as TagHeader).ParentFlags = CreationFlags;
                 (creationFlagPanel.Tag as TagHeader).Flag = key;
+                (creationFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1DE";
                 creationFlagsPanel.Items.Add(creationFlagPanel);
             }
 
@@ -180,7 +181,7 @@ namespace CTFPV.InformationItems
 
             // Flags
             TreeViewItem flagsPanel = Templates.Tab(true);
-            ((flagsPanel.Header as Grid).Children[0] as Label).Content = "Creation Flags";
+            ((flagsPanel.Header as Grid).Children[0] as Label).Content = "Flags";
             (flagsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1F4";
 
             foreach (string key in Flags.Keys)
@@ -192,6 +193,7 @@ namespace CTFPV.InformationItems
                 (flagPanel.Tag as TagHeader).ParentFlags = Flags;
                 (flagPanel.Tag as TagHeader).Flag = key;
                 (flagPanel.Tag as TagHeader).ActionType = 1;
+                (flagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1F4";
                 flagsPanel.Items.Add(flagPanel);
             }
 

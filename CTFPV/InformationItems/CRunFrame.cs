@@ -354,6 +354,7 @@ namespace CTFPV.InformationItems
                 ((flagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = Flags[key];
                 (flagPanel.Tag as TagHeader).ParentFlags = Flags;
                 (flagPanel.Tag as TagHeader).Flag = key;
+                (flagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0xC";
                 flagsPanel.Items.Add(flagPanel);
             }
 

@@ -5,6 +5,7 @@ using Encryption_Key_Finder.InformationItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,7 +39,8 @@ namespace CTFPV.Miscellaneous
 
         private void CopyPointer_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(Pointer.Replace("base", $"\"{PV.MemLib.mProc.MainModule.ModuleName}\""));
+            if (!string.IsNullOrEmpty(Pointer) && Pointer.Contains("base"))
+                Clipboard.SetText(Pointer.Replace("base", $"\"{PV.MemLib.mProc.MainModule.ModuleName}\""));
         }
 
         public void CheckBox_Clicked(object sender, RoutedEventArgs e)
@@ -117,10 +119,10 @@ namespace CTFPV.Miscellaneous
                         PV.MemLib.WriteMemory(Pointer, "double", dvalue.ToString());
                     break;
                 case 5: // Unicode String
-                    PV.MemLib.WriteMemory(Pointer, "string", (sender as TextBox).Text, stringEncoding: Encoding.Unicode);
+                    PV.MemLib.WriteMemory(Pointer, "string", (sender as TextBox).Text + (char)0, stringEncoding: Encoding.Unicode);
                     break;
                 case 6: // Ascii String
-                    PV.MemLib.WriteMemory(Pointer, "string", (sender as TextBox).Text, stringEncoding: Encoding.ASCII);
+                    PV.MemLib.WriteMemory(Pointer, "string", (sender as TextBox).Text + (char)0, stringEncoding: Encoding.ASCII);
                     break;
             }
             CRunFrame.UpdateObjects = true;

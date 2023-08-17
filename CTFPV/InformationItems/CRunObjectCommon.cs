@@ -344,6 +344,7 @@ namespace CTFPV.InformationItems
                 ((flagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = Flags[key];
                 (flagPanel.Tag as TagHeader).ParentFlags = Flags;
                 (flagPanel.Tag as TagHeader).Flag = key;
+                (flagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x10";
                 flagsPanel.Items.Add(flagPanel);
             }
 
@@ -376,6 +377,7 @@ namespace CTFPV.InformationItems
                 (newFlagPanel.Tag as TagHeader).ParentFlags = NewFlags;
                 (newFlagPanel.Tag as TagHeader).Flag = key;
                 (newFlagPanel.Tag as TagHeader).ActionType = 1;
+                (newFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2A";
                 newFlagsPanel.Items.Add(newFlagPanel);
             }
 
@@ -394,6 +396,7 @@ namespace CTFPV.InformationItems
                 (prefPanel.Tag as TagHeader).ParentFlags = NewFlags;
                 (prefPanel.Tag as TagHeader).Flag = key;
                 (prefPanel.Tag as TagHeader).ActionType = 1;
+                (prefsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2C";
                 prefsPanel.Items.Add(prefPanel);
             }
 

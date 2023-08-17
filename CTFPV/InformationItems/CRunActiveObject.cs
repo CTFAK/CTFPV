@@ -74,7 +74,41 @@ namespace CTFPV.InformationItems
 
         // Alterable Values
         public CRunValue[] AlterableValues;
-        public int AlterableFlags;
+        public BitDict AlterableFlags = new BitDict(new string[]
+        {
+            "Alterable Flag 1",
+            "Alterable Flag 2",
+            "Alterable Flag 3",
+            "Alterable Flag 4",
+            "Alterable Flag 5",
+            "Alterable Flag 6",
+            "Alterable Flag 7",
+            "Alterable Flag 8",
+            "Alterable Flag 9",
+            "Alterable Flag 10",
+            "Alterable Flag 11",
+            "Alterable Flag 12",
+            "Alterable Flag 13",
+            "Alterable Flag 14",
+            "Alterable Flag 15",
+            "Alterable Flag 16",
+            "Alterable Flag 17",
+            "Alterable Flag 18",
+            "Alterable Flag 19",
+            "Alterable Flag 20",
+            "Alterable Flag 21",
+            "Alterable Flag 22",
+            "Alterable Flag 23",
+            "Alterable Flag 24",
+            "Alterable Flag 25",
+            "Alterable Flag 26",
+            "Alterable Flag 27",
+            "Alterable Flag 28",
+            "Alterable Flag 29",
+            "Alterable Flag 30",
+            "Alterable Flag 31",
+            "Alterable Flag 32"
+        });
         public string[] AlterableStrings;
 
         public override void InitData(string parentPointer)
@@ -109,13 +143,13 @@ namespace CTFPV.InformationItems
             {
                 CRunValue val = new CRunValue();
                 val.ValueOffset = i * 16;
-                val.InitData(parentPointer + ", 0x232");
+                val.InitData(parentPointer + ", 0x242");
                 AlterableValues[i] = val;
             }
-            AlterableFlags = PV.MemLib.ReadInt(parentPointer + ", 0x29A");
-            AlterableStrings = new string[26];
-            for (int i = 0; i < 26; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 696).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            AlterableFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x2AA");
+            AlterableStrings = new string[10];
+            for (int i = 0; i < 10; i++)
+                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0", length: 255, stringEncoding: Encoding.Unicode);
         }
 
         public override void RefreshData(string parentPointer)
@@ -143,13 +177,13 @@ namespace CTFPV.InformationItems
             {
                 CRunValue val = new CRunValue();
                 val.ValueOffset = i * 16;
-                val.InitData(parentPointer + ", 0x232");
+                val.InitData(parentPointer + ", 0x242");
                 AlterableValues[i] = val;
             }
-            AlterableFlags = PV.MemLib.ReadInt(parentPointer + ", 0x29A");
-            AlterableStrings = new string[26];
-            for (int i = 0; i < 26; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 696).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            AlterableFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x2AA");
+            AlterableStrings = new string[10];
+            for (int i = 0; i < 10; i++)
+                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0", length: 255, stringEncoding: Encoding.Unicode);
         }
 
         public override List<TreeViewItem> GetPanel()
@@ -271,6 +305,7 @@ namespace CTFPV.InformationItems
                 ((creationFlagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = CreationFlags[key];
                 (creationFlagPanel.Tag as TagHeader).ParentFlags = CreationFlags;
                 (creationFlagPanel.Tag as TagHeader).Flag = key;
+                (creationFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x22E";
                 creationFlagsPanel.Items.Add(creationFlagPanel);
             }
 
@@ -306,12 +341,13 @@ namespace CTFPV.InformationItems
                 ((flagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = Flags[key];
                 (flagPanel.Tag as TagHeader).ParentFlags = Flags;
                 (flagPanel.Tag as TagHeader).Flag = key;
+                (flagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x23E";
                 flagsPanel.Items.Add(flagPanel);
             }
 
             sprStructPanel.Items.Add(flagsPanel);
 
-            // Flags
+            // Fade Create Flags
             TreeViewItem fadeCreateFlagsPanel = Templates.Tab(true);
             ((fadeCreateFlagsPanel.Header as Grid).Children[0] as Label).Content = "Fade Create Flags";
             (fadeCreateFlagsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x240";
@@ -324,6 +360,7 @@ namespace CTFPV.InformationItems
                 ((fadeCreateFlagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = FadeCreateFlags[key];
                 (fadeCreateFlagPanel.Tag as TagHeader).ParentFlags = FadeCreateFlags;
                 (fadeCreateFlagPanel.Tag as TagHeader).Flag = key;
+                (fadeCreateFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x240";
                 fadeCreateFlagsPanel.Items.Add(fadeCreateFlagPanel);
             }
 
@@ -338,19 +375,65 @@ namespace CTFPV.InformationItems
             // Alterable Values
             TreeViewItem altValsPanel = Templates.Tab(true);
             ((altValsPanel.Header as Grid).Children[0] as Label).Content = "Alterable Values";
-            (altValsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x232";
+            (altValsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x242";
+
+            for (int i = 0; i < AlterableValues.Length; i++)
+            {
+                // Alterable Value
+                TreeViewItem altValPanel = Templates.Editbox();
+                ((altValPanel.Header as Grid).Children[0] as Label).Content = "Alterable Value " + i;
+                ((altValPanel.Header as Grid).Children[1] as TextBox).Text = AlterableValues[i].Value().ToString();
+                (altValPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x242, 0x" + ((i * 16) + 8).ToString("X");
+
+                switch (AlterableValues[i].Type)
+                {
+                    case 1:
+                        (altValPanel.Tag as TagHeader).ActionType = 5;
+                        break;
+                    case 2:
+                        (altValPanel.Tag as TagHeader).ActionType = 4;
+                        break;
+                }
+                altValsPanel.Items.Add(altValPanel);
+            }
+
             altsPanel.Items.Add(altValsPanel);
 
             // Alterable Flags
             TreeViewItem altFlagsPanel = Templates.Tab(true);
             ((altFlagsPanel.Header as Grid).Children[0] as Label).Content = "Alterable Flags";
-            (altFlagsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x29A";
+            (altFlagsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2AA";
+
+            foreach (string key in AlterableFlags.Keys)
+            {
+                if (string.IsNullOrEmpty(key)) continue;
+                TreeViewItem altFlagPanel = Templates.Checkbox(false);
+                ((altFlagPanel.Header as Grid).Children[0] as Label).Content = key;
+                ((altFlagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = AlterableFlags[key];
+                (altFlagPanel.Tag as TagHeader).ParentFlags = AlterableFlags;
+                (altFlagPanel.Tag as TagHeader).Flag = key;
+                (altFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2AA";
+                altFlagsPanel.Items.Add(altFlagPanel);
+            }
+
             altsPanel.Items.Add(altFlagsPanel);
 
-            // Alterable String
+            // Alterable Strings
             TreeViewItem altStrsPanel = Templates.Tab();
             ((altStrsPanel.Header as Grid).Children[0] as Label).Content = "Alterable Strings";
-            (altStrsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2B8";
+            (altStrsPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x2C8";
+
+            for (int i = 0; i < AlterableStrings.Length; i++)
+            {
+                // Alterable String
+                TreeViewItem altStrPanel = Templates.Editbox();
+                ((altStrPanel.Header as Grid).Children[0] as Label).Content = "Alterable String " + i;
+                ((altStrPanel.Header as Grid).Children[1] as TextBox).Text = AlterableStrings[i];
+                (altStrPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + ((i * 4) + 712).ToString("X") + ", 0x0, 0x0";
+                (altStrPanel.Tag as TagHeader).ActionType = 5;
+                altStrsPanel.Items.Add(altStrPanel);
+            }
+
             altsPanel.Items.Add(altStrsPanel);
 
             panel.Add(altsPanel);

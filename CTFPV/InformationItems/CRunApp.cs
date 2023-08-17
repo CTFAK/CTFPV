@@ -234,7 +234,7 @@ namespace Encryption_Key_Finder.InformationItems
 
             // Globals
             for (int i = 0; i < GlobalValueCount; i++)
-                GlobalValues[i].RefreshData(parentPointer + ", 0x268" + (i * 16).ToString("X"));
+                GlobalValues[i].RefreshData(parentPointer + ", 0x268");
 
             for (int i = 0; i < GlobalStringCount; i++)
                 GlobalStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x27C, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
@@ -308,6 +308,7 @@ namespace Encryption_Key_Finder.InformationItems
                 (flagPanel.Tag as TagHeader).ParentFlags = Flags;
                 (flagPanel.Tag as TagHeader).Flag = key;
                 (flagPanel.Tag as TagHeader).ActionType = 1;
+                (flagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x14";
                 flagsPanel.Items.Add(flagPanel);
             }
 
@@ -326,6 +327,7 @@ namespace Encryption_Key_Finder.InformationItems
                 (newFlagPanel.Tag as TagHeader).ParentFlags = NewFlags;
                 (newFlagPanel.Tag as TagHeader).Flag = key;
                 (newFlagPanel.Tag as TagHeader).ActionType = 1;
+                (newFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x16";
                 newFlagsPanel.Items.Add(newFlagPanel);
             }
 
@@ -346,40 +348,16 @@ namespace Encryption_Key_Finder.InformationItems
 
             foreach (string key in OtherFlags.Keys)
             {
-                if (string.IsNullOrEmpty(key) || key.Contains("Direct3D")) continue;
+                if (string.IsNullOrEmpty(key)) continue;
                 TreeViewItem otherFlagPanel = Templates.Checkbox(false);
                 ((otherFlagPanel.Header as Grid).Children[0] as Label).Content = key;
                 ((otherFlagPanel.Header as Grid).Children[1] as CheckBox).IsChecked = OtherFlags[key];
                 (otherFlagPanel.Tag as TagHeader).ParentFlags = OtherFlags;
                 (otherFlagPanel.Tag as TagHeader).Flag = key;
                 (otherFlagPanel.Tag as TagHeader).ActionType = 1;
+                (otherFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1A";
                 otherFlagsPanel.Items.Add(otherFlagPanel);
             }
-
-            // Direct3D 8
-            TreeViewItem direct3D8Panel = Templates.Checkbox(false);
-            ((direct3D8Panel.Header as Grid).Children[0] as Label).Content = "Direct3D 8";
-            ((direct3D8Panel.Header as Grid).Children[1] as CheckBox).IsChecked = OtherFlags["Direct3D8or11"] && !OtherFlags["Direct3D9or11"];
-            (direct3D8Panel.Tag as TagHeader).ParentFlags = OtherFlags;
-            (direct3D8Panel.Tag as TagHeader).Flag = "Direct3D8or11";
-            (direct3D8Panel.Tag as TagHeader).ActionType = 1;
-            otherFlagsPanel.Items.Add(direct3D8Panel);
-
-            // Direct3D 9
-            TreeViewItem direct3D9Panel = Templates.Checkbox(false);
-            ((direct3D9Panel.Header as Grid).Children[0] as Label).Content = "Direct3D 9";
-            ((direct3D9Panel.Header as Grid).Children[1] as CheckBox).IsChecked = !OtherFlags["Direct3D8or11"] && OtherFlags["Direct3D9or11"];
-            (direct3D9Panel.Tag as TagHeader).ParentFlags = OtherFlags;
-            (direct3D9Panel.Tag as TagHeader).Flag = "Direct3D9or11";
-            (direct3D9Panel.Tag as TagHeader).ActionType = 1;
-            otherFlagsPanel.Items.Add(direct3D9Panel);
-
-            // Direct3D 11
-            TreeViewItem direct3D11Panel = Templates.Checkbox(false);
-            ((direct3D11Panel.Header as Grid).Children[0] as Label).Content = "Direct3D 11";
-            ((direct3D11Panel.Header as Grid).Children[1] as CheckBox).IsChecked = OtherFlags["Direct3D8or11"] && OtherFlags["Direct3D9or11"];
-            (direct3D11Panel.Tag as TagHeader).ActionType = 5;
-            otherFlagsPanel.Items.Add(direct3D11Panel);
 
             appHeaderPanel.Items.Add(otherFlagsPanel);
 
@@ -533,6 +511,7 @@ namespace Encryption_Key_Finder.InformationItems
                 (appRunFlagPanel.Tag as TagHeader).ParentFlags = AppRunFlags;
                 (appRunFlagPanel.Tag as TagHeader).Flag = key;
                 (appRunFlagPanel.Tag as TagHeader).ActionType = 1;
+                (appRunFlagPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1FA";
                 appRunFlagsPanel.Items.Add(appRunFlagPanel);
             }
 
@@ -550,9 +529,9 @@ namespace Encryption_Key_Finder.InformationItems
             {
                 // Global Value
                 TreeViewItem gblValPanel = Templates.Editbox();
-                ((gblValPanel.Header as Grid).Children[0] as Label).Content = "Global Value " + gblValID++;
+                ((gblValPanel.Header as Grid).Children[0] as Label).Content = "Global Value " + gblValID;
                 ((gblValPanel.Header as Grid).Children[1] as TextBox).Text = gblVal.Value().ToString();
-                (gblValPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x268, 0x" + ((gblValID * 16) + 8).ToString("X");
+                (gblValPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x268, 0x" + ((gblValID++ * 16) + 8).ToString("X");
 
                 switch (gblVal.Type)
                 {
@@ -578,9 +557,9 @@ namespace Encryption_Key_Finder.InformationItems
             {
                 // Global String
                 TreeViewItem gblStrPanel = Templates.Editbox();
-                ((gblStrPanel.Header as Grid).Children[0] as Label).Content = "Global String " + gblStrID++;
+                ((gblStrPanel.Header as Grid).Children[0] as Label).Content = "Global String " + gblStrID;
                 ((gblStrPanel.Header as Grid).Children[1] as TextBox).Text = gblStr;
-                (gblStrPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x27C, 0x" + (gblStrID * 4).ToString("X") + ", 0x0";
+                (gblStrPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x27C, 0x" + (gblStrID++ * 4).ToString("X") + ", 0x0";
                 (gblStrPanel.Tag as TagHeader).ActionType = 5;
                 gblStrsPanel.Items.Add(gblStrPanel);
             }
