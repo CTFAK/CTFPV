@@ -61,7 +61,7 @@ If you right click almost anything, there will be an option to copy the pointer 
 
 However, if you right click the game title, you will have a list of actions you may perform relating to the game's storyboard.
 
-If you run into a ***crash***, you may [open an issue](https://github.com/CTFAK/CTFAK2.0/issues). If the issue is not a crash, please do not open an issue.
+If you run into a problem, you may [open an issue](https://github.com/CTFAK/CTFAK2.0/issues).
 
 # To-Do List
 |%| Task |Description
