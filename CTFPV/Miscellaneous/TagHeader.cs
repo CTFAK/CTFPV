@@ -88,7 +88,7 @@ namespace CTFPV.Miscellaneous
 
         public void EditBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.UndoAction != UndoAction.Create)
+            if (string.IsNullOrEmpty(Pointer))
                 return;
 
             switch (ActionType)
@@ -96,14 +96,10 @@ namespace CTFPV.Miscellaneous
                 case 0: // Byte
                     if (byte.TryParse((sender as TextBox).Text.Trim(), out var bvalue))
                         PV.MemLib.WriteMemory(Pointer, "byte", bvalue.ToString());
-                    else
-                        sender = (TextBox)e.OriginalSource;
                     break;
                 case 1: // Short
                     if (short.TryParse((sender as TextBox).Text.Trim(), out var svalue))
                         PV.MemLib.WriteMemory(Pointer, "2bytes", svalue.ToString());
-                    else
-                        sender = (TextBox)e.OriginalSource;
                     break;
                 case 2: // Int
                     if (int.TryParse((sender as TextBox).Text.Trim(), out var ivalue))
@@ -111,20 +107,14 @@ namespace CTFPV.Miscellaneous
                             PV.MemLib.WriteMemory(Pointer, "int", ((ivalue * -1) - 1).ToString());
                         else
                             PV.MemLib.WriteMemory(Pointer, "int", ivalue.ToString());
-                    else
-                        sender = (TextBox)e.OriginalSource;
                     break;
                 case 3: // Float
                     if (float.TryParse((sender as TextBox).Text.Trim(), out var fvalue))
                         PV.MemLib.WriteMemory(Pointer, "float", fvalue.ToString());
-                    else
-                        sender = (TextBox)e.OriginalSource;
                     break;
                 case 4: // Double
                     if (double.TryParse((sender as TextBox).Text.Trim(), out var dvalue))
                         PV.MemLib.WriteMemory(Pointer, "double", dvalue.ToString());
-                    else
-                        sender = (TextBox)e.OriginalSource;
                     break;
                 case 5: // Unicode String
                     PV.MemLib.WriteMemory(Pointer, "string", (sender as TextBox).Text, stringEncoding: Encoding.Unicode);
