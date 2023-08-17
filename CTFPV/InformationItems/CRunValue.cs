@@ -24,7 +24,7 @@ namespace CTFPV.InformationItems
             switch (Type)
             {
                 default:
-                    return null;
+                    return "";
                 case 0:
                     return IntValue;
                 case 1:
