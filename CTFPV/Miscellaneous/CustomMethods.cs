@@ -19,5 +19,8 @@ namespace CTFPV.Miscellaneous
             else
                 return Color.FromArgb(vals[3], vals[0], vals[1], vals[2]);
         }
+
+        public static ushort ReadUShort(this Mem m, string code) => (ushort)m.Read2Byte(code);
+        public static short ReadShort(this Mem m, string code) => (short)m.Read2Byte(code);
     }
 }

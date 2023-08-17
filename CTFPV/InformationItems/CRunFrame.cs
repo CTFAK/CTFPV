@@ -1,4 +1,5 @@
 ﻿using ColorPicker;
+using CTFPV.InformationItems.Events;
 using CTFPV.Miscellaneous;
 using Encryption_Key_Finder.InformationItems;
 using System;
@@ -103,6 +104,10 @@ namespace CTFPV.InformationItems
         // Run Objects
         public static bool UpdateObjects = false;
         public List<CRunObject> Objects;
+
+        // Events
+        public int EventsInitialized;
+        public List<CEventGroup> Events;
 
         public override void InitData(string parentPointer)
         {
@@ -209,6 +214,22 @@ namespace CTFPV.InformationItems
                 for (int i = 0; i < MaxObjects; i++)
                     PV.MemLib.WriteMemory(parentPointer + ", 0x8D0, 0x" + (i * 8).ToString("X") + ", 0xFC", "int", "1");
             UpdateObjects = false;
+
+            // Events
+            EventsInitialized = PV.MemLib.ReadInt(parentPointer + ", 0x78");
+
+            Events = new List<CEventGroup>();
+            int offset = 0;
+            for (int i = 0; i < 255; i++)
+            {
+                CEventGroup evnt = new CEventGroup();
+                evnt.EventGroupOffset = offset;
+                evnt.Read(parentPointer + ", 0x80");
+                if (evnt.Size <= 0) break;
+
+                Events.Add(evnt);
+                offset += evnt.Size;
+            }
         }
 
         public override void RefreshData(string parentPointer)
