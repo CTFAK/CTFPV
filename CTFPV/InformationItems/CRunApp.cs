@@ -605,13 +605,16 @@ namespace Encryption_Key_Finder.InformationItems
             TreeViewItem appItem = new TreeViewItem();
             Grid header = new Grid();
 
-            Icon appIcon = Icon.ExtractAssociatedIcon(FilePath);
-            Image icon = new Image();
-            icon.Source = appIcon.ToBitmap().ToImage();
-            icon.Width = 15;
-            icon.Height = 15;
-            icon.HorizontalAlignment = HorizontalAlignment.Left;
-            header.Children.Add(icon);
+            if (!string.IsNullOrEmpty(FilePath))
+            {
+                Icon appIcon = Icon.ExtractAssociatedIcon(FilePath);
+                Image icon = new Image();
+                icon.Source = appIcon.ToBitmap().ToImage();
+                icon.Width = 15;
+                icon.Height = 15;
+                icon.HorizontalAlignment = HorizontalAlignment.Left;
+                header.Children.Add(icon);
+            }
 
             Label name = new Label();
             name.Content = Name;
@@ -621,11 +624,11 @@ namespace Encryption_Key_Finder.InformationItems
             name.HorizontalContentAlignment = HorizontalAlignment.Center;
             name.FontSize = 10;
             name.Padding = new Thickness(0);
-            name.Margin = new Thickness(18, 0, 0, 0);
+            name.Margin = new Thickness(string.IsNullOrEmpty(FilePath) ? 0 : 18, 0, 0, 0);
             header.Children.Add(name);
 
             TagHeader tag = new TagHeader();
-            tag.Parent = this;
+            tag.ParentType = 1;
             tag.Pointer = latestParentPointer;
             appItem.ContextMenu = tag.GetMenu();
             appItem.Tag = tag;

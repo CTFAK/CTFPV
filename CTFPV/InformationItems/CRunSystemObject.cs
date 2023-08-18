@@ -10,7 +10,11 @@ namespace CTFPV.InformationItems
 {
     public class CRunSystemObject : PropertyPanel
     {
+        public int OddOffset;
+
         // Sprite Structure
+        public int Flash;
+        public int Layer;
         public int ZOrder;
         public BitDict CreationFlags = new BitDict(new string[]
         {
@@ -41,10 +45,26 @@ namespace CTFPV.InformationItems
             "Update Collision",
             "True Object"
         });
+        public Color BackgroundColor;
+        public int Effect;
+        public BitDict Flags = new BitDict(new string[]
+        {
+            "Hidden",
+            "Inactive",
+            "Sleeping",
+            "Scale Resample",
+            "Rotate Antialiased",
+            "Visible"
+        });
+        public BitDict FadeCreateFlags = new BitDict(new string[]
+        {
+            "", "", "", "", "", "", "",
+            "Hidden"
+        });
 
         // Universal System Object Values
         public short PlayerCount;
-        public BitDict Flags = new BitDict(new string[]
+        public BitDict SysFlags = new BitDict(new string[]
         {
             "1"
         });
@@ -69,33 +89,43 @@ namespace CTFPV.InformationItems
         public override void InitData(string parentPointer)
         {
             latestParentPointer = parentPointer;
+            if (PV.CRunApp.ProductBuild >= 292)
+                OddOffset = 680;
+            else
+                OddOffset = 506;
 
             // Sprite Structure
+            Flash = PV.MemLib.ReadInt(parentPointer + ", 0x1CE");
+            Layer = PV.MemLib.ReadInt(parentPointer + ", 0x1D6");
             ZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x1DA");
             CreationFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x1DE");
+            BackgroundColor = PV.MemLib.ReadColor(parentPointer + ", 0x1E2");
+            Effect = PV.MemLib.ReadInt(parentPointer + ", 0x1E6");
+            Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x1EE");
+            FadeCreateFlags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x1F0");
 
             // Universal System Object Values
             PlayerCount = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x1F2");
-            Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x1F4");
+            SysFlags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x1F4");
 
             // Counter
-            OldLevel = PV.MemLib.ReadInt(parentPointer + ", 0x1FA");
-            Level = PV.MemLib.ReadInt(parentPointer + ", 0x1FE");
+            OldLevel = PV.MemLib.ReadInt(parentPointer + ", 0x" + OddOffset.ToString("X"));
+            Level = PV.MemLib.ReadInt(parentPointer + ", 0x" + (OddOffset + 4).ToString("X"));
             Value = new CRunValue();
-            Value.ValueOffset = 514;
+            Value.ValueOffset = OddOffset + 8;
             Value.InitData(parentPointer);
-            Width = PV.MemLib.ReadInt(parentPointer + ", 0x212");
-            Height = PV.MemLib.ReadInt(parentPointer + ", 0x216");
-            Minimum = PV.MemLib.ReadDouble(parentPointer + ", 0x21A");
-            Maximum = PV.MemLib.ReadDouble(parentPointer + ", 0x222");
-            OldFrame = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x22A");
-            Hidden = (byte)PV.MemLib.ReadByte(parentPointer + ", 0x22C");
+            Width = PV.MemLib.ReadInt(parentPointer + ", 0x" + (OddOffset + 24).ToString("X"));
+            Height = PV.MemLib.ReadInt(parentPointer + ", 0x" + (OddOffset + 28).ToString("X"));
+            Minimum = PV.MemLib.ReadDouble(parentPointer + ", 0x" + (OddOffset + 32).ToString("X"));
+            Maximum = PV.MemLib.ReadDouble(parentPointer + ", 0x" + (OddOffset + 40).ToString("X"));
+            OldFrame = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x" + (OddOffset + 48).ToString("X"));
+            Hidden = (byte)PV.MemLib.ReadByte(parentPointer + ", 0x" + (OddOffset + 50).ToString("X"));
 
             // String
-            Text = PV.MemLib.ReadUnicode(parentPointer + ", 0x22E, 0x0");
-            Font = PV.MemLib.ReadInt(parentPointer + ", 0x236");
-            Color1 = PV.MemLib.ReadColor(parentPointer + ", 0x23A");
-            Color2 = PV.MemLib.ReadColor(parentPointer + ", 0x23E");
+            Text = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (OddOffset + 52).ToString("X") + ", 0x0");
+            Font = PV.MemLib.ReadInt(parentPointer + ", 0x" + (OddOffset + 56).ToString("X"));
+            Color1 = PV.MemLib.ReadColor(parentPointer + ", 0x" + (OddOffset + 60).ToString("X"));
+            Color2 = PV.MemLib.ReadColor(parentPointer + ", 0x" + (OddOffset + 64).ToString("X"));
         }
 
         public override void RefreshData(string parentPointer)
@@ -173,14 +203,14 @@ namespace CTFPV.InformationItems
             TreeViewItem widthPanel = Templates.Editbox();
             ((widthPanel.Header as Grid).Children[0] as Label).Content = "Width";
             ((widthPanel.Header as Grid).Children[1] as TextBox).Text = Width.ToString();
-            (widthPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x212";
+            (widthPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 24).ToString("X");
             sysObjStructPanel.Items.Add(widthPanel);
 
             // Height
             TreeViewItem heightPanel = Templates.Editbox();
             ((heightPanel.Header as Grid).Children[0] as Label).Content = "Height";
             ((heightPanel.Header as Grid).Children[1] as TextBox).Text = Height.ToString();
-            (heightPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x216";
+            (heightPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 28).ToString("X");
             sysObjStructPanel.Items.Add(heightPanel);
 
             panel.Add(sysObjStructPanel);
@@ -195,32 +225,38 @@ namespace CTFPV.InformationItems
             TreeViewItem oldLvlPanel = Templates.Editbox();
             ((oldLvlPanel.Header as Grid).Children[0] as Label).Content = "Minimum";
             ((oldLvlPanel.Header as Grid).Children[1] as TextBox).Text = OldLevel.ToString();
-            (oldLvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1FA";
+            (oldLvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + OddOffset.ToString("X");
             cntrStructPanel.Items.Add(oldLvlPanel);
 
             // Level
             TreeViewItem lvlPanel = Templates.Editbox();
             ((lvlPanel.Header as Grid).Children[0] as Label).Content = "Maximum";
             ((lvlPanel.Header as Grid).Children[1] as TextBox).Text = Level.ToString();
-            (lvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1FE";
+            (lvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 4).ToString("X");
             cntrStructPanel.Items.Add(lvlPanel);
 
             // Value
             TreeViewItem valPanel = Templates.Editbox();
             ((valPanel.Header as Grid).Children[0] as Label).Content = "Value";
-            ((valPanel.Header as Grid).Children[1] as TextBox).Text = (((int)Value.Value() * -1) - 1).ToString();
-            (valPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x20A";
-            (valPanel.Tag as TagHeader).FlipCounter = true;
 
+            string valueText = string.Empty;
             switch (Value.Type)
             {
-                case 1:
+                case 0: // Int
+                    valueText = (((int)Value.Value() * -1) - 1).ToString();
+                    (valPanel.Tag as TagHeader).FlipCounter = true;
+                    break;
+                case 1: // String
+                    valueText = Value.Value().ToString();
                     (valPanel.Tag as TagHeader).ActionType = 5;
                     break;
-                case 2:
+                case 2: // Double
+                    valueText = Value.Value().ToString();
                     (valPanel.Tag as TagHeader).ActionType = 4;
                     break;
             }
+            ((valPanel.Header as Grid).Children[1] as TextBox).Text = valueText;
+            (valPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 16).ToString("X");
 
             cntrStructPanel.Items.Add(valPanel);
 
@@ -228,7 +264,7 @@ namespace CTFPV.InformationItems
             TreeViewItem oldFrmPanel = Templates.Editbox();
             ((oldFrmPanel.Header as Grid).Children[0] as Label).Content = "Old Frame";
             ((oldFrmPanel.Header as Grid).Children[1] as TextBox).Text = OldFrame.ToString();
-            (oldFrmPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x22A";
+            (oldFrmPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 48).ToString("X");
             (oldFrmPanel.Tag as TagHeader).ActionType = 1;
             cntrStructPanel.Items.Add(oldFrmPanel);
 
@@ -236,7 +272,7 @@ namespace CTFPV.InformationItems
             TreeViewItem hiddenPanel = Templates.Editbox();
             ((hiddenPanel.Header as Grid).Children[0] as Label).Content = "Hidden";
             ((hiddenPanel.Header as Grid).Children[1] as TextBox).Text = Hidden.ToString();
-            (hiddenPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x22C";
+            (hiddenPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 50).ToString("X");
             (hiddenPanel.Tag as TagHeader).ActionType = 0;
             cntrStructPanel.Items.Add(hiddenPanel);
 
@@ -250,7 +286,7 @@ namespace CTFPV.InformationItems
             TreeViewItem textPanel = Templates.Editbox();
             ((textPanel.Header as Grid).Children[0] as Label).Content = "Text";
             ((textPanel.Header as Grid).Children[1] as TextBox).Text = Text;
-            (textPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x22E, 0x0";
+            (textPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 52).ToString("X") + ", 0x0";
             (textPanel.Tag as TagHeader).ActionType = 5;
             strStructPanel.Items.Add(textPanel);
 
@@ -258,7 +294,7 @@ namespace CTFPV.InformationItems
             TreeViewItem fontPanel = Templates.Editbox();
             ((fontPanel.Header as Grid).Children[0] as Label).Content = "Font";
             ((fontPanel.Header as Grid).Children[1] as TextBox).Text = Font.ToString();
-            (fontPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x236";
+            (fontPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 56).ToString("X");
             strStructPanel.Items.Add(fontPanel);
 
             // Color 1
@@ -269,7 +305,7 @@ namespace CTFPV.InformationItems
             ((primaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).Color.RGB_B = Color1.B;
             ((primaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).Color.A = 255;
             ((primaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).ShowAlpha = false;
-            (primaryColorPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x23A";
+            (primaryColorPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 60).ToString("X");
             strStructPanel.Items.Add(primaryColorPanel);
 
             // Color 2
@@ -280,7 +316,7 @@ namespace CTFPV.InformationItems
             ((secondaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).Color.RGB_B = Color2.B;
             ((secondaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).Color.A = 255;
             ((secondaryColorPanel.Header as Grid).Children[1] as PortableColorPicker).ShowAlpha = false;
-            (secondaryColorPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x23E";
+            (secondaryColorPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x" + (OddOffset + 60).ToString("X");
             strStructPanel.Items.Add(secondaryColorPanel);
 
             panel.Add(strStructPanel);

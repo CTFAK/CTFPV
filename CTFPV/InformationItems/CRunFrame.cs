@@ -291,7 +291,7 @@ namespace CTFPV.InformationItems
             DestPointY = PV.MemLib.ReadInt(parentPointer + ", 0x9A8");
 
             // Run Objects
-            Objects = new List<CRunObject>();
+            List<CRunObject> NewObjects = new List<CRunObject>();
             for (int i = 0; i < MaxObjects; i++)
             {
                 string objPointer = parentPointer + ", 0x8D0, 0x" + (i * 8).ToString("X");
@@ -299,8 +299,9 @@ namespace CTFPV.InformationItems
                     continue;
                 CRunObject obj = new CRunObject();
                 obj.InitData(objPointer);
-                Objects.Add(obj);
+                NewObjects.Add(obj);
             }
+            Objects = NewObjects;
 
             if (UpdateObjects)
                 for (int i = 0; i < MaxObjects; i++)
@@ -695,7 +696,8 @@ namespace CTFPV.InformationItems
                 objItem.Header = objHeader;
                 objItem.IsExpanded = true;
                 TagHeader tag = new TagHeader();
-                tag.Parent = Objects[i];
+                tag.ParentType = 3;
+                tag.ParentHandle = i;
                 tag.Handle = Objects[i].Number;
                 tag.Pointer = Objects[i].latestParentPointer;
                 objItem.ContextMenu = tag.GetMenu();
@@ -704,7 +706,7 @@ namespace CTFPV.InformationItems
             }
 
             TagHeader frmtag = new TagHeader();
-            frmtag.Parent = this;
+            frmtag.ParentType = 2;
             frmtag.Pointer = latestParentPointer;
             frmItem.ContextMenu = frmtag.GetMenu();
             frmItem.Tag = frmtag;
@@ -749,7 +751,8 @@ namespace CTFPV.InformationItems
                 objItem.Header = objHeader;
                 objItem.IsExpanded = true;
                 TagHeader tag = new TagHeader();
-                tag.Parent = Objects[i];
+                tag.ParentType = 3;
+                tag.ParentHandle = i;
                 tag.Handle = Objects[i].Number;
                 tag.Pointer = Objects[i].latestParentPointer;
                 objItem.ContextMenu = tag.GetMenu();

@@ -20,8 +20,25 @@ namespace CTFPV.Miscellaneous
                 return Color.FromArgb(vals[3], vals[0], vals[1], vals[2]);
         }
 
-        public static string ReadAscii(this Mem m, string code, int length = -1) => m.ReadString(code, length: (length == -1 ? 99999 : length), stringEncoding: Encoding.ASCII);
+        public static string ReadAscii(this Mem m, string code, int length = -1) => m.ReadString(code, length: (length == -1 ? 9999 : length), stringEncoding: Encoding.ASCII);
 
-        public static string ReadUnicode(this Mem m, string code, int length = -1) => m.ReadString(code, length: (length == -1 ? 99999 : length), stringEncoding: Encoding.Unicode);
+        public static string ReadUnicode(this Mem m, string code, int length = -1)
+        {
+            string output = string.Empty;
+            if (length != -1)
+                output = m.ReadString(code, length: length, stringEncoding: Encoding.Unicode);
+            else
+            {
+                int offset = 0;
+                while (true)
+                {
+                    short chara = (short)m.Read2ByteMove(code, offset);
+                    if (chara == 0) break;
+                    output += (char)chara;
+                    offset += 2;
+                }
+            }
+            return output;
+        }
     }
 }

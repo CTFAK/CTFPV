@@ -16,7 +16,23 @@ namespace CTFPV.Miscellaneous
 {
     public class TagHeader
     {
-        public PropertyPanel Parent;
+        public int ParentType;
+        public int ParentHandle;
+        public PropertyPanel Parent()
+        {
+            switch (ParentType)
+            {
+                default:
+                    return null;
+                case 1:
+                    return PV.CRunApp;
+                case 2:
+                    return PV.CRunFrame;
+                case 3:
+                    return PV.CRunFrame.Objects[ParentHandle];
+            }
+        }
+
         public int Handle;
         public string Pointer;
 

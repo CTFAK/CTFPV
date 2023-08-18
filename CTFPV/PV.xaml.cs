@@ -141,7 +141,7 @@ namespace CTFPV
             if (selItem == null) return;
             TagHeader tag = (TagHeader)selItem.Tag;
 
-            currentLPParent = tag.Parent;
+            currentLPParent = tag.Parent();
             List<TreeViewItem> panel = currentLPParent.GetPanel();
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
