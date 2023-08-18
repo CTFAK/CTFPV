@@ -18,19 +18,19 @@ namespace CTFPV.InformationItems.Events
         public short ObjectList;
         public BitDict Flags = new BitDict(new string[]
         {
-            "Repeat",
-            "Done",
-            "Default",
-            "Done Before Fade-In",
-            "Not Done In Start",
-            "Always",
-            "Bad",
-            "Bad Object",
-            "Not",
-            "Notable",
-            "Monitorable",
-            "To Delete",
-            "New Sound"
+            "Repeat",              // 1
+            "Done",                // 2
+            "Default",             // 4
+            "Done Before Fade-In", // 8
+            "Not Done In Start",   // 16
+            "Always",              // 32
+            "Bad",                 // 64
+            "Bad Object",          // 128
+            "Not",                 // 256
+            "Notable",             // 512
+            "Monitorable",         // 1024
+            "To Delete",           // 2048
+            "New Sound"            // 4096
         });
         public byte ParameterCount;
         public byte DefaultType;
@@ -40,7 +40,7 @@ namespace CTFPV.InformationItems.Events
 
         public void Read(string parentPointer)
         {
-            Size = (short)(PV.MemLib.ReadShort(parentPointer + ", 0x" + EventOffset.ToString("X")) * -1);
+            Size = PV.MemLib.ReadShort(parentPointer + ", 0x" + EventOffset.ToString("X"));
             Type = PV.MemLib.ReadShort(parentPointer + ", 0x" + (EventOffset + 2).ToString("X"));
             Num = PV.MemLib.ReadShort(parentPointer + ", 0x" + (EventOffset + 4).ToString("X"));
             Object = PV.MemLib.ReadShort(parentPointer + ", 0x" + (EventOffset + 6).ToString("X"));

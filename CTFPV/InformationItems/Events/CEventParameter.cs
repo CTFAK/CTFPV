@@ -30,7 +30,7 @@ namespace CTFPV.InformationItems.Events
 
         public void Read(string parentPointer)
         {
-            Size = (short)(PV.MemLib.ReadShort(parentPointer + ", 0x" + ParameterOffset.ToString("X")) * -1);
+            Size = PV.MemLib.ReadShort(parentPointer + ", 0x" + ParameterOffset.ToString("X"));
             Code = PV.MemLib.ReadShort(parentPointer + ", 0x" + (ParameterOffset + 2).ToString("X"));
             W0 = PV.MemLib.ReadShort(parentPointer + ", 0x" + (ParameterOffset + 4).ToString("X"));
             W1 = PV.MemLib.ReadShort(parentPointer + ", 0x" + (ParameterOffset + 6).ToString("X"));

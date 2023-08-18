@@ -52,7 +52,7 @@ namespace CTFPV.InformationItems.Events
             Identifier = PV.MemLib.ReadShort(parentPointer + ", 0x" + (EventGroupOffset + 10).ToString("X"));
             UndoIdentifier = PV.MemLib.ReadShort(parentPointer + ", 0x" + (EventGroupOffset + 12).ToString("X"));
 
-            int offset = EventGroupOffset + 14;
+            int offset = EventGroupOffset + 16;
             Conditions = new CEvent[ConditionCount];
             for (int i = 0; i < ConditionCount; i++)
             {
