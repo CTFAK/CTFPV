@@ -19,5 +19,9 @@ namespace CTFPV.Miscellaneous
             else
                 return Color.FromArgb(vals[3], vals[0], vals[1], vals[2]);
         }
+
+        public static string ReadAscii(this Mem m, string code, int length = -1) => m.ReadString(code, length: (length == -1 ? 99999 : length), stringEncoding: Encoding.ASCII);
+
+        public static string ReadUnicode(this Mem m, string code, int length = -1) => m.ReadString(code, length: (length == -1 ? 99999 : length), stringEncoding: Encoding.Unicode);
     }
 }

@@ -151,43 +151,12 @@ namespace CTFPV.InformationItems
             int AlterableStringCount = PV.MemLib.ReadInt(parentPointer + ", 0x2CC");
             AlterableStrings = new string[AlterableStringCount];
             for (int i = 0; i < AlterableStringCount; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+                AlterableStrings[i] = PV.MemLib.ReadUnicode(parentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0");
         }
 
         public override void RefreshData(string parentPointer)
         {
-            latestParentPointer = parentPointer;
 
-            // Animation Structure
-            CurrentAnimationStopped = PV.MemLib.ReadInt(parentPointer + ", 0x1DA") == 1;
-            CurrentAnimation = PV.MemLib.ReadInt(parentPointer + ", 0x1DE");
-            CurrentDirection = PV.MemLib.ReadInt(parentPointer + ", 0x1E6");
-            CurrentSpeed = PV.MemLib.ReadInt(parentPointer + ", 0x1F2");
-            MinSpeed = PV.MemLib.ReadInt(parentPointer + ", 0x1F6");
-            MaxSpeed = PV.MemLib.ReadInt(parentPointer + ", 0x1FA");
-            Repeats = PV.MemLib.ReadInt(parentPointer + ", 0x20A");
-            Looping = PV.MemLib.ReadInt(parentPointer + ", 0x20E");
-            CurrentFrame = PV.MemLib.ReadInt(parentPointer + ", 0x212");
-            CurrentAnimationFrameCount = PV.MemLib.ReadInt(parentPointer + ", 0x216");
-
-            // Sprite Structure
-            ZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x22A");
-
-            // Alterable Values
-            int AlterableValueCount = PV.MemLib.ReadInt(parentPointer + ", 0x246");
-            AlterableValues = new CRunValue[AlterableValueCount];
-            for (int i = 0; i < AlterableValueCount; i++)
-            {
-                CRunValue val = new CRunValue();
-                val.ValueOffset = i * 16;
-                val.InitData(parentPointer + ", 0x242");
-                AlterableValues[i] = val;
-            }
-            AlterableFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x2AA");
-            int AlterableStringCount = PV.MemLib.ReadInt(parentPointer + ", 0x2CC");
-            AlterableStrings = new string[AlterableStringCount];
-            for (int i = 0; i < AlterableStringCount; i++)
-                AlterableStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x2C8, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
         }
 
         public override List<TreeViewItem> GetPanel()

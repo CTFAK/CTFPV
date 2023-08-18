@@ -1,4 +1,5 @@
-﻿using Encryption_Key_Finder.InformationItems;
+﻿using CTFPV.Miscellaneous;
+using Encryption_Key_Finder.InformationItems;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
@@ -37,7 +38,7 @@ namespace CTFPV.InformationItems
                 int stringOffset = 2;
                 for (int i = 0; i < AltStringCount; i++)
                 {
-                    AltStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + (StringsOffset + stringOffset).ToString("X"), length: 255, stringEncoding: Encoding.Unicode);
+                    AltStrings[i] = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (StringsOffset + stringOffset).ToString("X"));
                     stringOffset += (AltStrings[i].Length + 1) * 2;
                 }
             }
@@ -62,7 +63,7 @@ namespace CTFPV.InformationItems
                 int stringOffset = 2;
                 for (int i = 0; i < AltStringCount; i++)
                 {
-                    AltStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x" + (StringsOffset + stringOffset).ToString("X"), length: 255, stringEncoding: Encoding.Unicode);
+                    AltStrings[i] = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (StringsOffset + stringOffset).ToString("X"));
                     stringOffset += (AltStrings[i].Length + 1) * 2;
                 }
             }

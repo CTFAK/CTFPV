@@ -62,7 +62,7 @@ namespace CTFPV.InformationItems
             latestParentPointer = parentPointer;
 
             // Information
-            Name = PV.MemLib.ReadString(parentPointer + ", 0x" + LayerOffset.ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            Name = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + LayerOffset.ToString("X") + ", 0x0");
 
             // Offset
             OffsetX = PV.MemLib.ReadInt(parentPointer + ", 0x" + (LayerOffset + 4).ToString("X"));

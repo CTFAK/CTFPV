@@ -126,7 +126,7 @@ namespace CTFPV.InformationItems
             ObjInfoNumber = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x12");
             Type = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x18");
             CreationID = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x1A");
-            MovementName = PV.MemLib.ReadString(parentPointer + ", 0x38, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            MovementName = PV.MemLib.ReadUnicode(parentPointer + ", 0x38, 0x0");
             ObjectCommon = new CRunObjectCommon();
             ObjectCommon.InitData(parentPointer + ", 0x44");
 
@@ -146,7 +146,7 @@ namespace CTFPV.InformationItems
             Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x7C");
             Layer = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x84");
             CollisionFlags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x94");
-            Identifier = PV.MemLib.ReadString(parentPointer + ", 0xB4", length: 4, stringEncoding: Encoding.ASCII);
+            Identifier = PV.MemLib.ReadAscii(parentPointer + ", 0xB4", length: 4);
 
             // Animation/Movement Information
             CurrentPlayer = PV.MemLib.ReadInt(parentPointer + ", 0xC8");

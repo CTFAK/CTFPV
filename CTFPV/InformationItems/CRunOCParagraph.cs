@@ -31,7 +31,7 @@ namespace CTFPV.InformationItems
             Font = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x" + ParagraphOffset.ToString("X"));
             Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x" + (ParagraphOffset + 2).ToString("X"));
             Color = PV.MemLib.ReadColor(parentPointer + ", 0x" + (ParagraphOffset + 4).ToString("X"));
-            Text = PV.MemLib.ReadString(parentPointer + ", 0x" + (ParagraphOffset + 8).ToString("X"), length: 255, stringEncoding: Encoding.Unicode);
+            Text = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (ParagraphOffset + 8).ToString("X"));
         }
 
         public override void RefreshData(string parentPointer)

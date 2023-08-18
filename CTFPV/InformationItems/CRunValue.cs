@@ -1,4 +1,5 @@
-﻿using Encryption_Key_Finder.InformationItems;
+﻿using CTFPV.Miscellaneous;
+using Encryption_Key_Finder.InformationItems;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
@@ -47,7 +48,7 @@ namespace CTFPV.InformationItems
                     IntValue = PV.MemLib.ReadInt(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X"));
                     break;
                 case 1:
-                    StringValue = PV.MemLib.ReadString(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+                    StringValue = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X") + ", 0x0");
                     break;
                 case 2:
                     DoubleValue = PV.MemLib.ReadDouble(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X"));
@@ -67,7 +68,7 @@ namespace CTFPV.InformationItems
                     IntValue = PV.MemLib.ReadInt(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X"));
                     break;
                 case 1:
-                    StringValue = PV.MemLib.ReadString(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+                    StringValue = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X") + ", 0x0");
                     break;
                 case 2:
                     DoubleValue = PV.MemLib.ReadDouble(parentPointer + ", 0x" + (ValueOffset + 8).ToString("X"));

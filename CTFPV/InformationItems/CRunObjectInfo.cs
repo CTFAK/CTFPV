@@ -1,4 +1,5 @@
-﻿using Encryption_Key_Finder.InformationItems;
+﻿using CTFPV.Miscellaneous;
+using Encryption_Key_Finder.InformationItems;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
@@ -35,7 +36,7 @@ namespace CTFPV.InformationItems
         public override void InitData(string parentPointer)
         {
             // Information
-            Name = PV.MemLib.ReadString(parentPointer + ", 0x10, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            Name = PV.MemLib.ReadUnicode(parentPointer + ", 0x10, 0x0");
             Handle = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x0");
             Type = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x2");
             Flags.flag = (uint)PV.MemLib.Read2Byte(parentPointer + ", 0x4");

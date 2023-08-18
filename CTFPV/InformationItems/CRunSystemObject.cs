@@ -72,29 +72,27 @@ namespace CTFPV.InformationItems
 
             // Sprite Structure
             ZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x1DA");
-            // Gets lost somewhere after this
             CreationFlags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x1DE");
 
             // Universal System Object Values
             PlayerCount = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x1F2");
             Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x1F4");
+
+            // Counter
             OldLevel = PV.MemLib.ReadInt(parentPointer + ", 0x1FA");
             Level = PV.MemLib.ReadInt(parentPointer + ", 0x1FE");
             Value = new CRunValue();
             Value.ValueOffset = 514;
             Value.InitData(parentPointer);
-            // Gets lost somewhere before this
             Width = PV.MemLib.ReadInt(parentPointer + ", 0x212");
             Height = PV.MemLib.ReadInt(parentPointer + ", 0x216");
-
-            // Counter
             Minimum = PV.MemLib.ReadDouble(parentPointer + ", 0x21A");
             Maximum = PV.MemLib.ReadDouble(parentPointer + ", 0x222");
             OldFrame = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x22A");
             Hidden = (byte)PV.MemLib.ReadByte(parentPointer + ", 0x22C");
 
             // String
-            Text = PV.MemLib.ReadString(parentPointer + ", 0x22E, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            Text = PV.MemLib.ReadUnicode(parentPointer + ", 0x22E, 0x0");
             Font = PV.MemLib.ReadInt(parentPointer + ", 0x236");
             Color1 = PV.MemLib.ReadColor(parentPointer + ", 0x23A");
             Color2 = PV.MemLib.ReadColor(parentPointer + ", 0x23E");
@@ -102,33 +100,7 @@ namespace CTFPV.InformationItems
 
         public override void RefreshData(string parentPointer)
         {
-            latestParentPointer = parentPointer;
 
-            // Sprite Structure
-            ZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x1DA");
-
-            // Universal System Object Values
-            PlayerCount = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x202");
-            Flags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x204");
-            OldLevel = PV.MemLib.ReadInt(parentPointer + ", 0x20A");
-            Level = PV.MemLib.ReadInt(parentPointer + ", 0x20E");
-            Value = new CRunValue();
-            Value.ValueOffset = 514;
-            Value.InitData(parentPointer);
-            Width = PV.MemLib.ReadInt(parentPointer + ", 0x222");
-            Height = PV.MemLib.ReadInt(parentPointer + ", 0x226");
-
-            // Counter
-            Minimum = PV.MemLib.ReadDouble(parentPointer + ", 0x22A");
-            Maximum = PV.MemLib.ReadDouble(parentPointer + ", 0x232");
-            OldFrame = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x23A");
-            Hidden = (byte)PV.MemLib.ReadByte(parentPointer + ", 0x23C");
-
-            // String
-            Text = PV.MemLib.ReadString(parentPointer + ", 0x23E, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            Font = PV.MemLib.ReadInt(parentPointer + ", 0x246");
-            Color1 = PV.MemLib.ReadColor(parentPointer + ", 0x24A");
-            Color2 = PV.MemLib.ReadColor(parentPointer + ", 0x24E");
         }
 
         public override List<TreeViewItem> GetPanel()
@@ -197,21 +169,41 @@ namespace CTFPV.InformationItems
                 flagsPanel.Items.Add(flagPanel);
             }
 
+            // Width
+            TreeViewItem widthPanel = Templates.Editbox();
+            ((widthPanel.Header as Grid).Children[0] as Label).Content = "Width";
+            ((widthPanel.Header as Grid).Children[1] as TextBox).Text = Width.ToString();
+            (widthPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x212";
+            sysObjStructPanel.Items.Add(widthPanel);
+
+            // Height
+            TreeViewItem heightPanel = Templates.Editbox();
+            ((heightPanel.Header as Grid).Children[0] as Label).Content = "Height";
+            ((heightPanel.Header as Grid).Children[1] as TextBox).Text = Height.ToString();
+            (heightPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x216";
+            sysObjStructPanel.Items.Add(heightPanel);
+
+            panel.Add(sysObjStructPanel);
+
             sysObjStructPanel.Items.Add(flagsPanel);
+
+            // Counter Structure
+            TreeViewItem cntrStructPanel = Templates.Tab();
+            ((cntrStructPanel.Header as Grid).Children[0] as Label).Content = "Counter Structure";
 
             // Old Level
             TreeViewItem oldLvlPanel = Templates.Editbox();
             ((oldLvlPanel.Header as Grid).Children[0] as Label).Content = "Minimum";
             ((oldLvlPanel.Header as Grid).Children[1] as TextBox).Text = OldLevel.ToString();
             (oldLvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1FA";
-            sysObjStructPanel.Items.Add(oldLvlPanel);
+            cntrStructPanel.Items.Add(oldLvlPanel);
 
             // Level
             TreeViewItem lvlPanel = Templates.Editbox();
             ((lvlPanel.Header as Grid).Children[0] as Label).Content = "Maximum";
             ((lvlPanel.Header as Grid).Children[1] as TextBox).Text = Level.ToString();
             (lvlPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x1FE";
-            sysObjStructPanel.Items.Add(lvlPanel);
+            cntrStructPanel.Items.Add(lvlPanel);
 
             // Value
             TreeViewItem valPanel = Templates.Editbox();
@@ -230,27 +222,7 @@ namespace CTFPV.InformationItems
                     break;
             }
 
-            sysObjStructPanel.Items.Add(valPanel);
-
-            // Width
-            TreeViewItem widthPanel = Templates.Editbox();
-            ((widthPanel.Header as Grid).Children[0] as Label).Content = "Width";
-            ((widthPanel.Header as Grid).Children[1] as TextBox).Text = Width.ToString();
-            (widthPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x212";
-            sysObjStructPanel.Items.Add(widthPanel);
-
-            // Height
-            TreeViewItem heightPanel = Templates.Editbox();
-            ((heightPanel.Header as Grid).Children[0] as Label).Content = "Height";
-            ((heightPanel.Header as Grid).Children[1] as TextBox).Text = Height.ToString();
-            (heightPanel.Tag as TagHeader).Pointer = latestParentPointer + ", 0x216";
-            sysObjStructPanel.Items.Add(heightPanel);
-
-            panel.Add(sysObjStructPanel);
-
-            // Counter Structure
-            TreeViewItem cntrStructPanel = Templates.Tab();
-            ((cntrStructPanel.Header as Grid).Children[0] as Label).Content = "Counter Structure";
+            cntrStructPanel.Items.Add(valPanel);
 
             // Old Frame
             TreeViewItem oldFrmPanel = Templates.Editbox();

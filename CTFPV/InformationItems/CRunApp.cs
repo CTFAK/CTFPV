@@ -144,9 +144,9 @@ namespace Encryption_Key_Finder.InformationItems
             latestParentPointer = parentPointer;
 
             // App Mini Header
-            Header = PV.MemLib.ReadString(parentPointer + ", 0x0", length: 4, stringEncoding: Encoding.ASCII);
-            Version = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x4");
             SubVersion = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x6");
+            Header = PV.MemLib.ReadAscii(parentPointer + ", 0x0", length: 4);
+            Version = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x4");
             ProductVersion = PV.MemLib.ReadInt(parentPointer + ", 0x8");
             ProductBuild = PV.MemLib.ReadInt(parentPointer + ", 0xC");
 
@@ -160,12 +160,12 @@ namespace Encryption_Key_Finder.InformationItems
             FramesPerSecond = PV.MemLib.ReadInt(parentPointer + ", 0x78");
 
             // Information
-            Name = PV.MemLib.ReadString(parentPointer + ", 0x80, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            FilePath = PV.MemLib.ReadString(parentPointer + ", 0x84, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            EditorFilePath = PV.MemLib.ReadString(parentPointer + ", 0x88, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            Copyright = PV.MemLib.ReadString(parentPointer + ", 0x8C, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            About = PV.MemLib.ReadString(parentPointer + ", 0x90, 0x0", length: 255, stringEncoding: Encoding.Unicode);
-            TargetFilePath = PV.MemLib.ReadString(parentPointer + ", 0x94, 0x0", length: 255, stringEncoding: Encoding.Unicode);
+            Name = PV.MemLib.ReadUnicode(parentPointer + ", 0x80, 0x0");
+            FilePath = PV.MemLib.ReadUnicode(parentPointer + ", 0x84, 0x0");
+            EditorFilePath = PV.MemLib.ReadUnicode(parentPointer + ", 0x88, 0x0");
+            Copyright = PV.MemLib.ReadUnicode(parentPointer + ", 0x8C, 0x0");
+            About = PV.MemLib.ReadUnicode(parentPointer + ", 0x90, 0x0");
+            TargetFilePath = PV.MemLib.ReadUnicode(parentPointer + ", 0x94, 0x0");
             FrameCount = PV.MemLib.ReadInt(parentPointer + ", 0xC4");
 
             // Objects
@@ -205,7 +205,7 @@ namespace Encryption_Key_Finder.InformationItems
             }
 
             for (int i = 0; i < GlobalStringCount; i++)
-                GlobalStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x27C, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+                GlobalStrings[i] = PV.MemLib.ReadUnicode(parentPointer + ", 0x27C, 0x" + (i * 4).ToString("X") + ", 0x0");
 
             // Extended Header
             Options.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0x37C, 0x0");
@@ -237,7 +237,7 @@ namespace Encryption_Key_Finder.InformationItems
                 GlobalValues[i].RefreshData(parentPointer + ", 0x268");
 
             for (int i = 0; i < GlobalStringCount; i++)
-                GlobalStrings[i] = PV.MemLib.ReadString(parentPointer + ", 0x27C, 0x" + (i * 4).ToString("X") + ", 0x0", length: 255, stringEncoding: Encoding.Unicode);
+                GlobalStrings[i] = PV.MemLib.ReadUnicode(parentPointer + ", 0x27C, 0x" + (i * 4).ToString("X") + ", 0x0");
         }
 
         public override List<TreeViewItem> GetPanel()

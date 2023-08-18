@@ -101,7 +101,7 @@ namespace CTFPV.InformationItems
             StringsOffset = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x28");
             NewFlags.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x2A");
             Preferences.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x2C");
-            Identifier = PV.MemLib.ReadString(parentPointer + ", 0x2E", length: 4, stringEncoding: Encoding.ASCII);
+            Identifier = PV.MemLib.ReadAscii(parentPointer + ", 0x2E", length: 4);
             BackgroundColor = PV.MemLib.ReadColor(parentPointer + ", 0x32");
             FadeInOffset = PV.MemLib.ReadInt(parentPointer + ", 0x36");
             FadeOutOffset = PV.MemLib.ReadInt(parentPointer + ", 0x3A");

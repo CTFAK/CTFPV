@@ -114,7 +114,7 @@ namespace CTFPV.InformationItems
             Flags.flag = (uint)PV.MemLib.ReadInt(parentPointer + ", 0xC");
 
             // Information
-            Name = PV.MemLib.ReadString(parentPointer + ", 0x10, 0x0", stringEncoding: Encoding.Unicode);
+            Name = PV.MemLib.ReadUnicode(parentPointer + ", 0x10, 0x0");
             LevelLeft = PV.MemLib.ReadInt(parentPointer + ", 0x1C");
             LevelTop = PV.MemLib.ReadInt(parentPointer + ", 0x20");
             LevelLastLeft = PV.MemLib.ReadInt(parentPointer + ", 0x24");

@@ -1,4 +1,5 @@
-﻿using Encryption_Key_Finder.InformationItems;
+﻿using CTFPV.Miscellaneous;
+using Encryption_Key_Finder.InformationItems;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
@@ -59,7 +60,7 @@ namespace CTFPV.InformationItems
             Version = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x" + (SubAppOffset + 12).ToString("X"));
             StartFrame = (short)PV.MemLib.Read2Byte(parentPointer + ", 0x" + (SubAppOffset + 14).ToString("X"));
             Options.flag = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x" + (SubAppOffset + 16).ToString("X"));
-            Name = PV.MemLib.ReadString(parentPointer + ", 0x" + (SubAppOffset + 20).ToString("X"), length: 255, stringEncoding: Encoding.Unicode);
+            Name = PV.MemLib.ReadUnicode(parentPointer + ", 0x" + (SubAppOffset + 20).ToString("X"));
         }
 
         public override void RefreshData(string parentPointer)
