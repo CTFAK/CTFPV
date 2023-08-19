@@ -31,6 +31,7 @@ namespace CTFPV
 
         public static CRunApp CRunApp = new CRunApp();
         public static CRunFrame CRunFrame;
+        public static CRunHeader CRunHeader;
 
         public static string[] FrameNames;
             
@@ -65,6 +66,7 @@ namespace CTFPV
                 try
                 {
                     CRunApp.RefreshData("base+" + MainPointer.ToString("X"));
+                    CRunHeader.RefreshData("base+" + (MainPointer + 8).ToString("X"));
                     if (CRunApp.CurrentFrame != -1)
                     {
                         if (previousFrame != CRunApp.CurrentFrame)
@@ -73,6 +75,8 @@ namespace CTFPV
                             CRunApp.InitData("base+" + MainPointer.ToString("X"));
                             CRunFrame = new CRunFrame();
                             CRunFrame.InitData("base+" + (MainPointer + 4).ToString("X"));
+                            CRunHeader = new CRunHeader();
+                            CRunHeader.InitData("base+" + (MainPointer + 8).ToString("X"));
                             FrameNames[CRunApp.CurrentFrame] = CRunFrame.Name;
                             CreateList();
                             previousFrame = CRunApp.CurrentFrame;
@@ -107,6 +111,8 @@ namespace CTFPV
             {
                 CRunApp = new CRunApp();
                 CRunApp.InitData("base+" + MainPointer.ToString("X"));
+                CRunHeader = new CRunHeader();
+                CRunHeader.InitData("base+" + (MainPointer + 8).ToString("X"));
             }
             catch {}
             FrameNames = new string[CRunApp.FrameCount];

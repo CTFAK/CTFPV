@@ -592,6 +592,17 @@ namespace Encryption_Key_Finder.InformationItems
             extHeaderPanel.Items.Add(buildFlagsPanel);
 
             panel.Add(extHeaderPanel);
+
+            // CRunHeader
+            TreeViewItem runHeaderPanel = Templates.Tab(true);
+            ((runHeaderPanel.Header as Grid).Children[0] as Label).Content = "CRunHeader";
+            (runHeaderPanel.Tag as TagHeader).Pointer = "base+" + (PV.MainPointer + 8).ToString("X");
+
+            foreach (var item in PV.CRunHeader.GetPanel())
+                runHeaderPanel.Items.Add(item);
+
+            panel.Add(runHeaderPanel);
+
             return panel;
         }
 
