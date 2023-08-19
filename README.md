@@ -66,8 +66,7 @@ If you run into a problem, you may [open an issue](https://github.com/CTFAK/CTFA
 # To-Do List
 |%| Task |Description
 |--|--|--|
-| 2% | This | Write a to-do list. |
-| 0% | Run Header | Add a way to edit the Run Header. |
+| 0% | This | Write a to-do list. |
 
 # Full Credits
 |Name| Credit for... |
@@ -77,4 +76,4 @@ If you run into a problem, you may [open an issue](https://github.com/CTFAK/CTFA
 
 CTFPV is licensed under [AGPL-3.0](https://github.com/CTFAK/CTFPV/blob/master/LICENSE.txt).
 
-Readme Last Updated August 15th, 2023.
+Readme Last Updated August 18th, 2023.
