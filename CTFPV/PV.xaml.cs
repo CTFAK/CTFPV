@@ -63,7 +63,7 @@ namespace CTFPV
             while (true)
             {
                 stopwatch.Restart();
-                try
+                //try
                 {
                     CRunApp.RefreshData("base+" + MainPointer.ToString("X"));
                     CRunHeader.RefreshData("base+" + (MainPointer + 8).ToString("X"));
@@ -85,10 +85,17 @@ namespace CTFPV
                         RefreshList();
                     }
                 }
-                catch { }
+                //catch { }
                 Thread.Sleep((int)(1000.0 / CRunApp.FramesPerSecond) - (int)(stopwatch.ElapsedMilliseconds % (1000.0 / CRunApp.FramesPerSecond)));
             }
         }
+
+        public static byte[][] Headers = new byte[][]
+        {
+            Encoding.ASCII.GetBytes("PAMU"),
+            Encoding.ASCII.GetBytes("PAME"),
+            new byte[]{201, 125, 39, 4}
+        };
 
         public async Task Create()
         {
@@ -103,18 +110,27 @@ namespace CTFPV
             if (!MemLib.OpenProcess(CurrentProcess + ".exe"))
                 return;
 
-            await FindMV();
+            for (int i = 0; i < Headers.GetLength(0); i++)
+            {
+                await FindMV(Headers[i]);
+                if (MainPointer > 0)
+                    break;
+            }
             if (MainPointer <= 0)
                 return;
 
-            try
+            //try
             {
                 CRunApp = new CRunApp();
                 CRunApp.InitData("base+" + MainPointer.ToString("X"));
+            }
+            //catch { }
+            //try
+            {
                 CRunHeader = new CRunHeader();
                 CRunHeader.InitData("base+" + (MainPointer + 8).ToString("X"));
             }
-            catch {}
+            //catch { }
             FrameNames = new string[CRunApp.FrameCount];
             for (int i = 0; i < CRunApp.FrameCount; i++)
                 FrameNames[i] = "* Frame " + (i + 1);
@@ -166,14 +182,26 @@ namespace CTFPV
             }));
         }
 
-        public async Task FindMV()
+        public async Task FindMV(byte[] header)
         {
-            var baseAddress = MemLib.mProc.MainModule.BaseAddress.ToInt32();
+            var baseAddress = MemLib.mProc.MainModule.BaseAddress.ToInt64();
 
-            IEnumerable<long> PAMUSearch = await MemLib.AoBScan("50 41 4D 55", true, true);
+            string search = string.Empty;
+
+            foreach (byte b in header)
+            {
+                if (b.ToString("X") == "0")
+                    search += "00 ";
+                else if (b.ToString("X").Length == 1)
+                    search += $"0{b.ToString("X")} ";
+                else
+                    search += $"{b.ToString("X")} ";
+            }
+
+            IEnumerable<long> HeaderSearch = await MemLib.AoBScan(search.Trim(), true, true);
             
             long Header = 0;
-            foreach (long result in PAMUSearch)
+            foreach (long result in HeaderSearch)
             {
                 int i = MemLib.ReadInt((result + 4).ToString("X"));
                 if (i == 770)
@@ -185,17 +213,17 @@ namespace CTFPV
 
             if (Header == 0)
                 return;
-            string PAMUBytesA = "";
+            string HeaderBytes = "";
             foreach (byte b in BitConverter.GetBytes((int)Header))
             {
                 if (b.ToString("X") == "0")
-                    PAMUBytesA += "00 ";
+                    HeaderBytes += "00 ";
                 else if (b.ToString("X").Length == 1)
-                    PAMUBytesA += $"0{b.ToString("X")} ";
+                    HeaderBytes += $"0{b.ToString("X")} ";
                 else
-                    PAMUBytesA += $"{b.ToString("X")} ";
+                    HeaderBytes += $"{b.ToString("X")} ";
             }
-            IEnumerable<long> PointerSearch = await MemLib.AoBScan(PAMUBytesA.Trim(), true, true);
+            IEnumerable<long> PointerSearch = await MemLib.AoBScan(HeaderBytes.Trim(), true, true);
 
             long Pointer = 0;
             foreach (long pointer in PointerSearch)
@@ -203,8 +231,8 @@ namespace CTFPV
                 long i = pointer - baseAddress;
                 if (i > 1048576 || i < 0)
                     continue;
-                string output = MemLib.ReadString("base+" + i.ToString("X") + ", 0x0", length: 4, stringEncoding: Encoding.ASCII);
-                if (output == "PAMU")
+                byte[] output = MemLib.ReadBytes("base+" + i.ToString("X") + ", 0x0", 4);
+                if (output.SequenceEqual(header))
                     MainPointer = i;
             }
         }

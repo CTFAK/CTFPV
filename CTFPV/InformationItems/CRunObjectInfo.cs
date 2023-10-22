@@ -40,7 +40,7 @@ namespace CTFPV.InformationItems
             Handle = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x0");
             Type = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x2");
             Flags.flag = (uint)PV.MemLib.Read2Byte(parentPointer + ", 0x4");
-            if (Type != 1)
+            if (Type > 1)
             {
                 ObjectCommon = new CRunObjectCommon();
                 ObjectCommon.InitData(parentPointer + ", 0x14");
@@ -60,7 +60,7 @@ namespace CTFPV.InformationItems
         {
             // Information
             Flags.flag = (uint)PV.MemLib.Read2Byte(parentPointer + ", 0x4");
-            if (Type != 1)
+            if (Type > 1)
                 ObjectCommon.RefreshData(parentPointer + ", 0x14");
             Count = (ushort)PV.MemLib.Read2Byte(parentPointer + ", 0x22");
 

@@ -76,7 +76,7 @@ namespace CTFPV.InformationItems
             for (int i = 0; i < BackdropCount; i++)
             {
                 Backdrops[i] = new CRunBackdrop();
-                Backdrops[i].InitData(parentPointer + ", 0x" + (LayerOffset + 24).ToString("X") + ", 0x" + (i * 4).ToString("X"));
+                //Backdrops[i].InitData(parentPointer + ", 0x" + (LayerOffset + 24).ToString("X") + ", 0x" + (i * 4).ToString("X"));
             }
 
             // Ladders
@@ -120,8 +120,8 @@ namespace CTFPV.InformationItems
             // Backdrops
             BackdropCount = PV.MemLib.ReadInt(parentPointer + ", 0x" + (LayerOffset + 20).ToString("X"));
             Backdrops = new CRunBackdrop[BackdropCount];
-            for (int i = 0; i < BackdropCount; i++)
-                Backdrops[i].RefreshData(parentPointer + ", 0x" + (LayerOffset + 24).ToString("X") + ", 0x" + (i * 4).ToString("X"));
+            //for (int i = 0; i < BackdropCount; i++)
+                //Backdrops[i].RefreshData(parentPointer + ", 0x" + (LayerOffset + 24).ToString("X") + ", 0x" + (i * 4).ToString("X"));
 
             // Z-Order
             MaxZOrder = PV.MemLib.ReadInt(parentPointer + ", 0x" + (LayerOffset + 40).ToString("X"));
